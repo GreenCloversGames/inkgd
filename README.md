@@ -3,7 +3,7 @@
 [![build](https://github.com/ephread/inkgd/workflows/build/badge.svg)](https://github.com/ephread/inkgd/actions)
 [![Documentation Status](https://readthedocs.org/projects/inkgd/badge/?version=latest)](https://inkgd.readthedocs.io/en/latest/?badge=latest)
 ![Version](https://img.shields.io/badge/version-0.4.3-orange.svg)
-![Godot Version](https://img.shields.io/badge/godot-3.3+-blue.svg)
+![Godot Version](https://img.shields.io/badge/godot-4+-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 Implementation of [inkle’s Ink] in pure GDScript, with editor support.
@@ -41,7 +41,7 @@ and don’t mind C#, you should consider using [godot-ink].
 	- [x] Integrated story previewer
 
 ## Requirements
-- Godot 3.3+
+- Godot 4+
 - Inklecate 1.0.0+
 
 ## Asking Questions / Contributing
