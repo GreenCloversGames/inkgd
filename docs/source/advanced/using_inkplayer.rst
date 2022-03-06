@@ -19,6 +19,23 @@ In addition to reading this document, feel free to glance at
     InkPlayer's API documentation is available
     :doc:`here <../classes/class_inkplayer>`.
 
+Basic Implementation
+--------------------------------
+
+In order for InkPlayer to begin your story, you need to first create a story, then wait for the story to load before using the story. It's recomended that you connect a signal from the InkPlayer node to the script you wish to handle your story with, or use the yield function. 
+
+Below is some basic code you can implement into your project to start your ink project. 
+
+
+.. code-block:: gdscript
+
+    onready var inkplayer = $InkPlayer
+
+    func _ready():
+        inkplayer.create_story()
+        yield(inkplayer, "loaded")
+        print(inkplayer.continue_story())
+
 
 Main differences with *story.gd*
 --------------------------------
