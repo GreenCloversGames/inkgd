@@ -61,7 +61,7 @@ var _ink_player = InkPlayerFactory.create()
 # On Ready | Private Properties
 # ############################################################################ #
 
-@onready var _play_icon = get_icon("Play", "EditorIcons")
+@onready var _play_icon = get_theme_icon("Play", "EditorIcons")
 
 # ############################################################################ #
 # On Ready | Private Nodes
@@ -100,9 +100,9 @@ func _ready():
 	_apply_configuration()
 	_update_story_picker()
 
-	var load_icon = get_icon("Load", "EditorIcons")
-	var stop_icon = get_icon("Stop", "EditorIcons")
-	var clear_icon = get_icon("Clear", "EditorIcons")
+	var load_icon = get_theme_icon("Load", "EditorIcons")
+	var stop_icon = get_theme_icon("Stop", "EditorIcons")
+	var clear_icon = get_theme_icon("Clear", "EditorIcons")
 
 	_start_button.icon = _play_icon
 	_load_story_button.icon = load_icon
@@ -170,8 +170,8 @@ func _pick_story_button_selected(index):
 
 
 func _load_story_button_pressed():
-	_file_dialog.set_mode(FileDialog.FILE_MODE_OPEN_FILE)
-	_file_dialog.set_access(FileDialog.ACCESS_RESOURCES)
+	_file_dialog.set_file_mode(EditorFileDialog.FILE_MODE_OPEN_FILE)
+	_file_dialog.set_access(EditorFileDialog.ACCESS_RESOURCES)
 	_file_dialog.add_filter("*.json;Compiled Ink story")
 	_file_dialog.popup_centered(Vector2(1280, 800) * editor_interface.scale)
 
@@ -288,7 +288,7 @@ func _continue_story():
 		if !tags.is_empty():
 			var tag_label = Label.new()
 			tag_label.autowrap = true
-			tag_label.align = Label.ALIGNMENT_CENTER
+			tag_label.align = HORIZONTAL_ALIGNMENT_CENTER
 			tag_label.text = "# " + ", ".join(PackedStringArray(tags))
 			tag_label.add_theme_color_override("font_color", Color(1, 1, 1, 0.4))
 
@@ -311,7 +311,7 @@ func _continue_story():
 	else:
 		var label = Label.new()
 		label.text = "End of the story."
-		label.align = Label.ALIGN_RIGHT
+		label.align = HORIZONTAL_ALIGNMENT_RIGHT
 
 		_story_container.add_child(label)
 
@@ -347,15 +347,13 @@ func _connect_signals():
 	if configuration != null:
 		var is_connected = configuration.is_connected(
 				"story_configuration_changed",
-				self,
-				"_configuration_changed"
+				_configuration_changed
 		)
 
 		if !is_connected:
 			configuration.connect(
 					"story_configuration_changed",
-					self,
-					"_configuration_changed"
+					_configuration_changed
 			)
 
 	_ink_player.connect("loaded", Callable(self, "_story_loaded"))
