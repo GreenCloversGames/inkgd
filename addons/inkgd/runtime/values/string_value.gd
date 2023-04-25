@@ -32,7 +32,7 @@ func _init():
 	self._sanitize_value()
 
 func _init_with(val):
-	._init_with(val)
+	super._init_with(val)
 	self._sanitize_value()
 
 func cast(new_type):
@@ -40,7 +40,7 @@ func cast(new_type):
 		return self
 
 	if new_type == ValueType.INT:
-		if self.value.is_valid_integer():
+		if self.value.is_valid_int():
 			return IntValue().new_with(int(self.value))
 		else:
 			return null
@@ -59,7 +59,7 @@ func cast(new_type):
 # ######################################################################## #
 
 func is_class(type):
-	return type == "StringValue" || .is_class(type)
+	return type == "StringValue" || super.is_class(type)
 
 func get_class():
 	return "StringValue"

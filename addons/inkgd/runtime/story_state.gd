@@ -1,8 +1,8 @@
 # warning-ignore-all:shadowed_variable
 # warning-ignore-all:unused_class_variable
 # ############################################################################ #
-# Copyright © 2015-2021 inkle Ltd.
-# Copyright © 2019-2022 Frédéric Maquin <fred@ephread.com>
+# Copyright © 2015-present inkle Ltd.
+# Copyright © 2019-present Frédéric Maquin <fred@ephread.com>
 # All Rights Reserved
 #
 # This file is part of inkgd.
@@ -53,11 +53,11 @@ const MIN_COMPATIBLE_LOAD_VERSION: int = 8
 signal on_did_load_state()
 
 # ############################################################################ #
-
-func to_json() -> String:
-	var writer: InkSimpleJSON.Writer = InkSimpleJSON.Writer.new()
-	write_json(writer)
-	return writer._to_string()
+#
+#func JSON.new().stringify() -> String:
+#	var writer: InkSimpleJSON.Writer = InkSimpleJSON.Writer.new()
+#	write_json(writer)
+#	return writer._to_string()
 
 func load_json(json: String) -> void:
 	var jobject: Dictionary = InkSimpleJSON.text_to_dictionary(json)
@@ -84,7 +84,7 @@ func visit_count_at_path_string(path_string: String) -> int:
 func visit_count_for_container(container: InkContainer) -> int:
 	if !container.visits_should_be_counted:
 		self.story.error(
-				"Read count for target (%s - on %s) " % [container.name, container.debugMetadata] +
+				"Read count for target (%s - checked %s) " % [container.name, container.debugMetadata] +
 				"unknown. The story may need to be compiled with countAllVisits flag (-c)."
 		)
 		return 0
@@ -131,7 +131,7 @@ func record_turn_index_visit_to_container(container: InkContainer) -> void:
 func turns_since_for_container(container: InkContainer) -> int:
 	if !container.turn_index_should_be_counted:
 		self.story.error(
-				"TURNS_SINCE() for target (%s - on %s) " \
+				"TURNS_SINCE() for target (%s - checked %s) " \
 				% [container.name, container.debugMetadata] +
 				"unknown. The story may need to be compiled with countAllVisits flag (-c)."
 		)
@@ -148,21 +148,25 @@ func turns_since_for_container(container: InkContainer) -> int:
 	else:
 		return -1
 
-var callstack_depth: int setget , get_callstack_depth # int
+var callstack_depth:
+	get: get_callstack_depth # int
 func get_callstack_depth() -> int:
 	return self.callstack.depth
 
-var output_stream: Array setget , get_output_stream # Array<InkObject>
+var output_stream: 
+	get : get_output_stream # Array<InkObject>
 func get_output_stream() -> Array:
 	return self._current_flow.output_stream
 
-var current_choices: Array setget , get_current_choices # Array<Choice>
+var current_choices: 
+	get: get_current_choices # Array<Choice>
 func get_current_choices() -> Array:
 	if self.can_continue:
 		return []
 	return self._current_flow.current_choices
 
-var generated_choices: Array setget , get_generated_choices # Array<Choice>
+var generated_choices: 
+	get: get_generated_choices # Array<Choice>
 func get_generated_choices() -> Array:
 	return self._current_flow.current_choices
 
@@ -175,28 +179,28 @@ var current_warnings = null
 # InkVariablesState
 var variables_state
 
-var callstack: InkCallStack setget , get_callstack
-func get_callstack() -> InkCallStack:
+var callstack: get = get_callstack
+func get_callstack():
 	return self._current_flow.callstack
 
 # Array<InkObject>
 var evaluation_stack: Array
 
 # Pointer
-var diverted_pointer: InkPointer = InkPointer.null()
+var diverted_pointer: InkPointer = InkPointer.get_null()
 
 var current_turn_index: int = 0
 var story_seed: int = 0
 var previous_random: int = 0
 var did_safe_exit: bool = false
 
-var story setget , get_story
+var story : get = get_story
 func get_story():
 	return _story.get_ref()
 var _story = WeakRef.new()
 
 # String?
-var current_path_string setget , get_current_path_string
+var current_path_string : get = get_current_path_string
 func get_current_path_string():
 	var pointer = self.current_pointer
 	if pointer.is_null:
@@ -204,7 +208,7 @@ func get_current_path_string():
 	else:
 		return pointer.path._to_string()
 
-var current_pointer: InkPointer setget set_current_pointer, get_current_pointer
+var current_pointer: InkPointer : get = get_current_pointer, set = set_current_pointer
 func get_current_pointer() -> InkPointer:
 	var pointer = self.callstack.current_element.current_pointer
 	return self.callstack.current_element.current_pointer
@@ -213,7 +217,7 @@ func set_current_pointer(value: InkPointer):
 	var current_element = self.callstack.current_element
 	current_element.current_pointer = value
 
-var previous_pointer: InkPointer setget set_previous_pointer, get_previous_pointer
+var previous_pointer: InkPointer : get = get_previous_pointer, set = set_previous_pointer
 func get_previous_pointer() -> InkPointer:
 	return self.callstack.current_thread.previous_pointer
 
@@ -221,25 +225,25 @@ func set_previous_pointer(value: InkPointer):
 	var current_thread = self.callstack.current_thread
 	current_thread.previous_pointer = value
 
-var can_continue: bool setget , get_can_continue
+var can_continue: bool : get = get_can_continue
 func get_can_continue() -> bool:
 	return !self.current_pointer.is_null && !self.has_error
 
-var has_error: bool setget , get_has_error
+var has_error: bool : get = get_has_error
 func get_has_error() -> bool:
 	return self.current_errors != null && self.current_errors.size() > 0
 
-var has_warning: bool setget , get_has_warning
+var has_warning: bool : get = get_has_warning
 func get_has_warning() -> bool:
 	return self.current_warnings != null && self.current_warnings.size() > 0
 
-var current_text: String setget , get_current_text
+var current_text: String : get = get_current_text
 func get_current_text():
 	if self._output_stream_text_dirty:
 		var _str = ""
 
 		for output_obj in self.output_stream:
-			var text_content: InkStringValue = Utils.as_or_null(output_obj, "StringValue")
+			var text_content = Utils.as_or_null(output_obj, "StringValue")
 			if text_content != null:
 				_str += text_content.value
 
@@ -284,7 +288,7 @@ func clean_output_whitespace(str_to_clean: String) -> String:
 	return _str
 
 # Array<String>
-var current_tags: Array setget , get_current_tags
+var current_tags: Array : get = get_current_tags
 func get_current_tags():
 	if self._output_stream_tags_dirty:
 		self._current_tags = []
@@ -301,13 +305,13 @@ func get_current_tags():
 # Array<String>
 var _current_tags: Array = []
 
-var current_flow_name: String setget , get_current_flow_name
+var current_flow_name: String : get = get_current_flow_name
 func get_current_flow_name() -> String:
 	return self._current_flow.name
 
-var in_expression_evaluation: bool setget \
-		set_in_expression_evaluation, \
-		get_in_expression_evaluation
+var in_expression_evaluation: 
+		set(value): set_in_expression_evaluation
+		get: get_in_expression_evaluation
 func get_in_expression_evaluation() -> bool:
 	return self.callstack.current_element.in_expression_evaluation
 func set_in_expression_evaluation(value: bool):
@@ -471,22 +475,22 @@ func write_json(writer: InkSimpleJSON.Writer) -> void:
 	if self._named_flows != null:
 		for named_flow_key in self._named_flows.keys():
 			var named_flow_value = self._named_flows[named_flow_key]
-			writer.write_property(named_flow_key, funcref(named_flow_value, "write_json"))
+			writer.write_property(named_flow_key, named_flow_value.bind("write_json"))
 	else:
-		writer.write_property(self._current_flow.name, funcref(self._current_flow, "write_json"))
+		writer.write_property(self._current_flow.name, self._current_flow.bind("write_json"))
 
 	writer.write_object_end()
 	writer.write_property_end()
 
 	writer.write_property("currentFlowName", self._current_flow.name)
-	writer.write_property("variablesState", funcref(self.variables_state, "write_json"))
-	writer.write_property("evalStack", funcref(self, "_anonymous_write_property_eval_stack"))
+	writer.write_property("variablesState", self.variables_state.bind("write_json"))
+#	writer.write_property("evalStack", funcref(self, "_anonymous_write_property_eval_stack"))
 
 	if !self.diverted_pointer.is_null:
 		writer.write_property("currentDivertTarget", self.diverted_pointer.path.components_string)
 
-	writer.write_property("visitCounts", funcref(self, "_anonymous_write_property_visit_counts"))
-	writer.write_property("turnIndices", funcref(self, "_anonymous_write_property_turn_indices"))
+##	writer.write_property("visitCounts", funcref(self, "_anonymous_write_property_visit_counts"))
+#	writer.write_property("turnIndices", funcref(self, "_anonymous_write_property_turn_indices"))
 
 	writer.write_property("turnIdx", self.current_turn_index)
 	writer.write_property("storySeed", self.story_seed)
@@ -603,7 +607,7 @@ func pop_from_output_stream(count: int) -> void:
 	self.output_stream_dirty()
 
 
-func try_splitting_head_tail_whitespace(single: InkStringValue) -> InkStringValue:
+func try_splitting_head_tail_whitespace(single):
 	var _str = single.value
 
 	var head_first_newline_idx = -1
@@ -763,7 +767,7 @@ func trim_newlines_from_output_stream() -> void:
 		while i < self.output_stream.size():
 			var text = Utils.as_or_null(self.output_stream[i], "StringValue")
 			if text:
-				self.output_stream.remove(i)
+				self.output_stream.remove_at(i)
 			else:
 				i += 1
 
@@ -775,7 +779,7 @@ func remove_existing_glue() -> void:
 	while (i >= 0):
 		var c = self.output_stream[i]
 		if Utils.is_ink_class(c, "Glue"):
-			self.output_stream.remove(i)
+			self.output_stream.remove_at(i)
 		elif Utils.is_ink_class(c, "ControlCommand"):
 			break
 
@@ -784,7 +788,7 @@ func remove_existing_glue() -> void:
 	self.output_stream_dirty()
 
 
-var output_stream_ends_in_newline: bool setget , get_output_stream_ends_in_newline
+var output_stream_ends_in_newline: bool : get = get_output_stream_ends_in_newline
 func get_output_stream_ends_in_newline() -> bool:
 	if self.output_stream.size() > 0:
 		var i = self.output_stream.size() - 1
@@ -804,7 +808,7 @@ func get_output_stream_ends_in_newline() -> bool:
 	return false
 
 
-var output_stream_contains_content: bool setget , get_output_stream_contains_content
+var output_stream_contains_content: bool : get = get_output_stream_contains_content
 func get_output_stream_contains_content() -> bool:
 	for content in self.output_stream:
 		if Utils.is_ink_class(content, "StringValue"):
@@ -813,7 +817,7 @@ func get_output_stream_contains_content() -> bool:
 	return false
 
 
-var in_string_evaluation: bool setget , get_in_string_evaluation
+var in_string_evaluation: bool : get = get_in_string_evaluation
 func get_in_string_evaluation() -> bool:
 	var i = self.output_stream.size() - 1
 
@@ -837,7 +841,7 @@ func push_evaluation_stack(obj: InkObject) -> void:
 			raw_list.origins.clear()
 
 			for n in raw_list.origin_names:
-				var def: InkTryGetResult = self.story.list_definitions.try_list_get_definition(n)
+				var def = self.story.list_definitions.try_list_get_definition(n)
 
 				if raw_list.origins.find(def.result) < 0:
 					raw_list.origins.append(def.result)
@@ -860,8 +864,8 @@ func pop_evaluation_stack(number_of_objects: int = -1):
 		return []
 
 	var popped = Utils.get_range(self.evaluation_stack,
-								 self.evaluation_stack.size() - number_of_objects,
-								 number_of_objects)
+							self.evaluation_stack.size() - number_of_objects,
+							number_of_objects)
 
 	Utils.remove_range(
 		self.evaluation_stack,
@@ -876,8 +880,8 @@ func force_end() -> void:
 
 	self._current_flow.current_choices.clear()
 
-	self.current_pointer = InkPointer.null()
-	self.previous_pointer = InkPointer.null()
+	self.current_pointer = InkPointer.get_null()
+	self.previous_pointer = InkPointer.get_null()
 
 	self.did_safe_exit = true
 
@@ -901,7 +905,7 @@ func trim_whitespace_from_function_end() -> void:
 		if cmd: break
 
 		if txt.is_newline || txt.is_inline_whitespace:
-			self.output_stream.remove(i)
+			self.output_stream.remove_at(i)
 			self.output_stream_dirty()
 		else:
 			break
@@ -963,7 +967,7 @@ func pass_arguments_to_evaluation_stack(arguments) -> void:
 # () -> bool
 func try_exit_function_evaluation_from_game() -> bool:
 	if self.callstack.current_element.type == PushPopType.FUNCTION_EVALUATION_FROM_GAME:
-		self.current_pointer = InkPointer.null()
+		self.current_pointer = InkPointer.get_null()
 		self.did_safe_exit = true
 		return true
 
@@ -1052,16 +1056,16 @@ func _anonymous_write_property_turn_indices(writer) -> void:
 # GDScript extra methods
 # ############################################################################ #
 
-func is_class(type: String) -> bool:
-	return type == "StoryState" || .is_class(type)
-
-func get_class() -> String:
-	return "StoryState"
+#func is_class(type: String) -> bool:
+#	return type == "StoryState" || super.is_class(type)
+#
+#func get_class() -> String:
+#	return "StoryState"
 
 
 # ############################################################################ #
 
-var Json setget , get_Json
+var Json : get = get_Json
 func get_Json():
 	return _Json.get_ref()
 var _Json: WeakRef = WeakRef.new()

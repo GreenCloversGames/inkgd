@@ -18,12 +18,12 @@ var _exception_raised_count = 0
 # ############################################################################ #
 
 func before_all():
-	.before_all()
-	ink_runtime.connect("exception_raised", self, "_exception_raised")
+	super.before_all()
+	ink_runtime.connect("exception_raised", Callable(self, "_exception_raised"))
 
 func after_all():
-	ink_runtime.disconnect("exception_raised", self, "_exception_raised")
-	.after_all()
+	ink_runtime.disconnect("exception_raised", Callable(self, "_exception_raised"))
+	super.after_all()
 
 func after_each():
 	_temp_not_found_last_error_type = -1
@@ -58,7 +58,7 @@ func test_temp_global_conflict():
 
 func test_temp_not_found():
 	var story = Story.new(load_file("temp_not_found"))
-	story.connect("on_error", self, "_temp_not_found_on_error")
+	story.connect("on_error", Callable(self, "_temp_not_found_on_error"))
 
 	assert_eq(story.continue_maximally(), "0\nhello\n")
 	assert_true(_temp_not_found_had_warning()) # Changed in ink 1.0.0 but kept here for now.

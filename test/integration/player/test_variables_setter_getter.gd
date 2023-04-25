@@ -35,7 +35,7 @@ var _ink_player = InkPlayerFactory.create()
 # ############################################################################ #
 
 func before_all():
-	.before_all()
+	super.before_all()
 	get_tree().root.add_child(_ink_player)
 
 # ############################################################################ #
@@ -47,7 +47,7 @@ func test_ink_list_simple_roundtrip() -> void:
 	_ink_player.loads_in_background = true
 	_ink_player.create_story()
 
-	var successfully = yield(_ink_player, "loaded")
+	var successfully = await _ink_player.loaded
 
 	assert_true(successfully, "The story did not load correctly.")
 	if !successfully:
@@ -71,7 +71,7 @@ func test_ink_path_simple_roundtrip() -> void:
 	_ink_player.loads_in_background = true
 	_ink_player.create_story()
 
-	var successfully = yield(_ink_player, "loaded")
+	var successfully = await _ink_player.loaded
 
 	assert_true(successfully, "The story did not load correctly.")
 	if !successfully:

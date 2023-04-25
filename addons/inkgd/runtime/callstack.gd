@@ -1,8 +1,8 @@
 # warning-ignore-all:shadowed_variable
 # warning-ignore-all:unused_class_variable
 # ############################################################################ #
-# Copyright © 2015-2021 inkle Ltd.
-# Copyright © 2019-2022 Frédéric Maquin <fred@ephread.com>
+# Copyright © 2015-present inkle Ltd.
+# Copyright © 2019-present Frédéric Maquin <fred@ephread.com>
 # All Rights Reserved
 #
 # This file is part of inkgd.
@@ -33,7 +33,7 @@ class Element extends InkBase:
 
 	# ######################################################################## #
 
-	var current_pointer = Pointer.null() # Pointer
+	var current_pointer = Pointer.get_null() # Pointer
 
 	var in_expression_evaluation = false # bool
 	var temporary_variables = null # Dictionary<String, InkObject>
@@ -42,7 +42,7 @@ class Element extends InkBase:
 	var function_start_in_ouput_stream = 0 # int
 
 	# (PushPopType, Pointer, bool) -> InkElement
-	func _init(type, pointer, in_expression_evaluation = false):
+	func _init(type,pointer,in_expression_evaluation = false):
 		self.current_pointer = pointer
 		self.in_expression_evaluation = in_expression_evaluation
 		self.temporary_variables = {}
@@ -60,11 +60,11 @@ class Element extends InkBase:
 	# GDScript extra methods
 	# ######################################################################## #
 
-	func is_class(type):
-		return type == "CallStack.Element" || .is_class(type)
-
-	func get_class():
-		return "CallStack.Element"
+#	func is_class(type):
+#		return type == "CallStack.Element" || super.is_class(type)
+#
+#	func get_class():
+#		return "CallStack.Element"
 
 class InkThread extends InkBase:
 	# ######################################################################## #
@@ -78,7 +78,7 @@ class InkThread extends InkBase:
 
 	var callstack = null # Array<Element>
 	var thread_index = 0 # int
-	var previous_pointer = Pointer.null() # Pointer
+	var previous_pointer = Pointer.get_null() # Pointer
 
 	func _init():
 		get_static_json()
@@ -93,7 +93,7 @@ class InkThread extends InkBase:
 			var jelement_obj = jel_tok
 			var push_pop_type = int(jelement_obj["type"])
 
-			var pointer = Pointer.null()
+			var pointer = Pointer.get_null()
 			var current_container_path_str = null
 			var current_container_path_str_token = null
 
@@ -183,11 +183,11 @@ class InkThread extends InkBase:
 	# GDScript extra methods
 	# ######################################################################## #
 
-	func is_class(type):
-		return type == "CallStack.InkThread" || .is_class(type)
-
-	func get_class():
-		return "CallStack.InkThread"
+#	func is_class(type):
+#		return type == "CallStack.InkThread" || super.is_class(type)
+#
+#	func get_class():
+#		return "CallStack.InkThread"
 
 	# ######################################################################## #
 
@@ -197,7 +197,7 @@ class InkThread extends InkBase:
 		return thread
 
 	# ######################################################################## #
-	var Json setget , get_Json
+	var Json : get = get_Json
 	func get_Json():
 		return _Json.get_ref()
 
@@ -207,46 +207,46 @@ class InkThread extends InkBase:
 		var InkRuntime = Engine.get_main_loop().root.get_node("__InkRuntime")
 
 		Utils.__assert__(InkRuntime != null,
-					 str("Could not retrieve 'InkRuntime' singleton from the scene tree."))
+					str("Could not retrieve 'InkRuntime' singleton from the scene tree."))
 
 		_Json = weakref(InkRuntime.json)
 
 # () -> Array<InkElement>
-var elements setget , get_elements
+var elements : get = get_elements
 func get_elements():
 	return self.callstack
 
 # () -> int
-var depth setget , get_depth
+var depth : get = get_depth
 func get_depth():
 	return self.elements.size()
 
 # () -> InkElement
-var current_element setget , get_current_element
+var current_element : get = get_current_element
 func get_current_element():
 	var thread = self._threads.back()
 	var cs = thread.callstack
 	return cs.back()
 
 # () -> int
-var current_element_index setget , get_current_element_index
+var current_element_index : get = get_current_element_index
 func get_current_element_index():
 	return self.callstack.size() - 1
 
 # () -> InkThread
 # (InkThread) -> void
-var current_thread setget set_current_thread, get_current_thread
+var current_thread : get = get_current_thread, set = set_current_thread
 func get_current_thread():
 	return self._threads.back()
 
 func set_current_thread(value):
 	Utils.__assert__(_threads.size() == 1,
-				 "Shouldn't be directly setting the current thread when we have a stack of them")
+				"Shouldn't be directly setting the current thread when we have a stack of them")
 	self._threads.clear()
 	self._threads.append(value)
 
 # () -> bool
-var can_pop setget , get_can_pop
+var can_pop : get = get_can_pop
 func get_can_pop():
 	return self.callstack.size() > 1
 
@@ -286,7 +286,8 @@ func set_json_token(jobject, story_context):
 
 # (SimpleJson.Writer) -> void
 func write_json(writer):
-	writer.write_object(funcref(self, "_anonymous_write_json"))
+#	writer.write_object(funcref(self, "_anonymous_write_json"))
+	pass
 
 # () -> void
 func push_thread():
@@ -310,12 +311,12 @@ func pop_thread():
 		Utils.throw_exception("Can't pop thread")
 
 # () -> bool
-var can_pop_thread setget , get_can_pop_thread
+var can_pop_thread : get = get_can_pop_thread
 func get_can_pop_thread():
 	return _threads.size() > 1 && !self.element_is_evaluate_from_game
 
 # () -> bool
-var element_is_evaluate_from_game setget , get_element_is_evaluate_from_game
+var element_is_evaluate_from_game : get = get_element_is_evaluate_from_game
 func get_element_is_evaluate_from_game():
 	return self.current_element.type == PushPopType.FUNCTION_EVALUATION_FROM_GAME
 
@@ -394,11 +395,11 @@ func thread_with_index(index):
 
 	return null
 
-var callstack setget , get_callstack
+var callstack : get = get_callstack
 func get_callstack():
 	return self.current_thread.callstack
 
-var callstack_trace setget , get_callstack_trace
+var callstack_trace : get = get_callstack_trace
 func get_callstack_trace():
 	var sb = ""
 	var t = 0
@@ -406,7 +407,7 @@ func get_callstack_trace():
 		var thread = _threads[t]
 		var is_current = (t == _threads.size() - 1)
 		sb += str("=== THREAD ", str(t + 1), "/", str(_threads.size()), " ",
-				 ("(current) " if is_current else "" ), "===\n")
+				("(current) " if is_current else "" ), "===\n")
 
 		var i = 0
 		while i < thread.callstack.size():
@@ -428,17 +429,17 @@ func get_callstack_trace():
 
 var _threads = null # Array<InkThread>
 var _thread_counter = 0 # int
-var _start_of_root = InkPointer.null() # Pointer
+var _start_of_root = InkPointer.get_null() # Pointer
 
 # ############################################################################ #
 # GDScript extra methods
 # ############################################################################ #
 
-func is_class(type):
-	return type == "CallStack" || .is_class(type)
-
-func get_class():
-	return "CallStack"
+#func is_class(type):
+#	return type == "CallStack" || super.is_class(type)
+#
+#func get_class():
+#	return "CallStack"
 
 # C# Actions & Delegates ##################################################### #
 

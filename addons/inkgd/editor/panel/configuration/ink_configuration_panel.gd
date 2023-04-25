@@ -1,10 +1,10 @@
+@tool
 # ############################################################################ #
 # Copyright © 2019-2022 Frédéric Maquin <fred@ephread.com>
 # Licensed under the MIT License.
 # See LICENSE in the project root for license information.
 # ############################################################################ #
 
-tool
 extends Control
 
 # Hiding this type to prevent registration of "private" nodes.
@@ -59,20 +59,20 @@ var _file_dialog_selection = FileDialogSelection.UNKNOWN
 # Nodes
 # ############################################################################ #
 
-onready var _test_button = find_node("TestButton")
+@onready var _test_button = find_child("TestButton")
 
-onready var _use_mono_label = find_node("UseMonoLabel")
-onready var _use_mono_checkbox = find_node("UseMonoCheckBox")
+@onready var _use_mono_label = find_child("UseMonoLabel")
+@onready var _use_mono_checkbox = find_child("UseMonoCheckBox")
 
-onready var _mono_label = find_node("MonoLabel")
-onready var _mono_container = find_node("MonoHBoxContainer")
-onready var _mono_line_edit = find_node("MonoLineEdit")
-onready var _mono_dialog_button = find_node("MonoDialogButton")
+@onready var _mono_label = find_child("MonoLabel")
+@onready var _mono_container = find_child("MonoHBoxContainer")
+@onready var _mono_line_edit = find_child("MonoLineEdit")
+@onready var _mono_dialog_button = find_child("MonoDialogButton")
 
-onready var _executable_line_edit = find_node("ExecutableLineEdit")
-onready var _executable_dialog_button = find_node("ExecutableDialogButton")
+@onready var _executable_line_edit = find_child("ExecutableLineEdit")
+@onready var _executable_dialog_button = find_child("ExecutableDialogButton")
 
-onready var _recompilation_mode_button = find_node("RecompilationModeOptionButton")
+@onready var _recompilation_mode_button = find_child("RecompilationModeOptionButton")
 
 # ############################################################################ #
 # Overrides
@@ -121,7 +121,7 @@ func _mono_button_pressed():
 	_file_dialog.current_path = configuration.mono_path
 	_file_dialog.current_dir = configuration.mono_path.get_base_dir()
 	_file_dialog.current_file = configuration.mono_path.get_file()
-	_file_dialog.set_mode(FileDialog.MODE_OPEN_FILE)
+	_file_dialog.set_mode(FileDialog.FILE_MODE_OPEN_FILE)
 	_file_dialog.set_access(FileDialog.ACCESS_FILESYSTEM)
 	_file_dialog.popup_centered(Vector2(1280, 800) * editor_interface.scale)
 
@@ -133,7 +133,7 @@ func _executable_button_pressed():
 	_file_dialog.current_file = configuration.inklecate_path
 	_file_dialog.current_dir = configuration.inklecate_path.get_base_dir()
 	_file_dialog.current_file = configuration.inklecate_path.get_file()
-	_file_dialog.set_mode(FileDialog.MODE_OPEN_FILE)
+	_file_dialog.set_mode(FileDialog.FILE_MODE_OPEN_FILE)
 	_file_dialog.set_access(FileDialog.ACCESS_FILESYSTEM)
 	_file_dialog.popup_centered(Vector2(1280, 800) * editor_interface.scale)
 
@@ -160,7 +160,7 @@ func _test_button_pressed():
 
 		dialog.popup_centered()
 	else:
-		var dialog = InkRichDialog.instance()
+		var dialog = InkRichDialog.instantiate()
 		add_child(dialog)
 
 
@@ -239,18 +239,18 @@ func _set_button_icons():
 
 
 func _connect_signals():
-	_test_button.connect("pressed", self, "_test_button_pressed")
-	_use_mono_checkbox.connect("toggled", self, "_use_mono_toggled")
+	_test_button.connect("pressed", Callable(self, "_test_button_pressed"))
+	_use_mono_checkbox.connect("toggled", Callable(self, "_use_mono_toggled"))
 
-	_mono_line_edit.connect("text_entered", self, "_configuration_entered")
-	_executable_line_edit.connect("text_entered", self, "_configuration_entered")
+	_mono_line_edit.connect("text_submitted", Callable(self, "_configuration_entered"))
+	_executable_line_edit.connect("text_submitted", Callable(self, "_configuration_entered"))
 
-	_mono_line_edit.connect("focus_exited", self, "_configuration_focus_exited")
-	_executable_line_edit.connect("focus_exited", self, "_configuration_focus_exited")
+	_mono_line_edit.connect("focus_exited", Callable(self, "_configuration_focus_exited"))
+	_executable_line_edit.connect("focus_exited", Callable(self, "_configuration_focus_exited"))
 
-	_mono_dialog_button.connect("pressed", self, "_mono_button_pressed")
-	_executable_dialog_button.connect("pressed", self, "_executable_button_pressed")
+	_mono_dialog_button.connect("pressed", Callable(self, "_mono_button_pressed"))
+	_executable_dialog_button.connect("pressed", Callable(self, "_executable_button_pressed"))
 
-	_recompilation_mode_button.connect("item_selected", self, "_recompilation_mode_button_selected")
+	_recompilation_mode_button.connect("item_selected", Callable(self, "_recompilation_mode_button_selected"))
 
-	_file_dialog.connect("file_selected", self, "_on_file_selected")
+	_file_dialog.connect("file_selected", Callable(self, "_on_file_selected"))
