@@ -184,7 +184,7 @@ func _remove_autoloads():
 
 ## Registers the script templates provided by the plugin.
 func _add_templates():
-	var dir = DirAccess.new()
+	var dir = DirAccess.open("res://")
 	var names = _get_plugin_templates_names()
 
 	# Setup the templates folder for the project
@@ -199,7 +199,7 @@ func _add_templates():
 
 ## Unregisters the script templates provided by the plugin.
 func _remove_templates():
-	var dir = DirAccess.new()
+	var dir = DirAccess.open("res://")
 	var names = _get_plugin_templates_names()
 	var template_dir_path = ProjectSettings.get_setting("editor/script_templates_search_path")
 
@@ -211,7 +211,7 @@ func _remove_templates():
 
 ## Get all the script templates provided by the plugin.
 func _get_plugin_templates_names() -> Array:
-	var dir = DirAccess.new()
+	var dir = DirAccess.open("res://")
 	var plugin_template_names = []
 
 	dir.change_dir("res://addons/inkgd/editor/templates/")
