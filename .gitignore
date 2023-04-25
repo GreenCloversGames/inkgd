@@ -4,12 +4,13 @@ export.cfg
 export_presets.cfg
 *.pck
 .godot
-addons/gut/
+
 
 # inkgd ignores
 .inkgd_compiler.cfg
 inkgd-issue-*
 inkgd-example-*.zip
+addons/gut/
 
 # template ignores
 script_templates
